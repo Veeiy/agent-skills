@@ -1,0 +1,24 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Secrets / local state — never commit
+.env
+.env.*
+*.key
+*.pem
+secrets.*
+**/data/*.csv
+state/
+*-state-local.md
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
