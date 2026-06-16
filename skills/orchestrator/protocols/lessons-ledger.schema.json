@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vantage Orchestrator Lessons Ledger",
+  "description": "Durable, cross-run memory for the orchestrator. Persists in the operator memory directory (default ~/Vault/Vantage-OS/orchestrator-memory/lessons-ledger.json), OUTSIDE any single run directory and OUTSIDE the engine's own files. Read at the start of every run (reapply) and written at the end of every run (retrospective). Holds distilled lessons about how to orchestrate better, never mission content. See references/self-improvement.md.",
+  "type": "object",
+  "required": ["version", "lessons"],
+  "properties": {
+    "version": { "type": "integer", "description": "Ledger schema version. 1." },
+    "last_updated": { "type": "string", "description": "ISO timestamp of the last retrospective that wrote here." },
+    "runs_seen": { "type": "integer", "description": "How many runs have contributed to this ledger. Increment once per retrospective." },
+    "lessons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "trigger", "lesson", "confidence", "status"],
+        "properties": {
+          "id": { "type": "string", "description": "Stable id, e.g. L-0007." },
+          "created": { "type": "string", "description": "ISO timestamp." },
+          "last_applied": { "type": ["string", "null"], "description": "ISO timestamp of the most recent run that reapplied this lesson." },
+          "category": {
+            "type": "string",
+            "enum": ["planning", "briefing", "audit-pattern", "budget", "tooling", "safety"],
+            "description": "What part of orchestration this lesson improves."
+          },
+          "trigger": { "type": "string", "description": "The matchable condition that says this lesson applies to a run, e.g. 'mission has a storefront that states a price'." },
+          "tags": { "type": "array", "items": { "type": "string" }, "description": "Coarse match keys, e.g. website, pricing, supplier, compliance." },
+          "lesson": { "type": "string", "description": "The durable guidance in imperative voice. This is the text injected into a future brief or used to shape a future plan." },
+          "applies_to_agents": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["researcher", "ideation", "implementation", "website-build", "auditor", "frontend-tester", "optimizer", "orchestrator"] },
+            "description": "Which agents' briefs this lesson should ride into. 'orchestrator' means it shapes planning, not an agent brief."
+          },
+          "evidence": {
+            "type": "array",
+            "description": "The runs that produced or confirmed this lesson. Citations, so a future reader can audit it.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "run_id": { "type": "string" },
+                "dispatch_id": { "type": ["string", "null"] },
+                "what_happened": { "type": "string" }
+              }
+            }
+          },
+          "confidence": { "type": "string", "enum": ["low", "medium", "high"], "description": "How much to trust the lesson. Born low, rises with confirmation, falls when contradicted." },
+          "times_applied": { "type": "integer", "description": "How many runs reapplied this lesson." },
+          "times_confirmed": { "type": "integer", "description": "Of those, how many where the bad outcome did not recur. Drives confidence up." },
+          "times_contradicted": { "type": "integer", "description": "Applied but the failure happened anyway. Drives confidence down and flags for operator review." },
+          "status": { "type": "string", "enum": ["active", "retired", "promoted"], "description": "active = in use. retired = proven wrong or obsolete, kept for history. promoted = graduated into an engine-improvement proposal." },
+          "promoted_proposal": { "type": ["string", "null"], "description": "Path to the improvement proposal if this lesson was promoted." }
+        }
+      }
+    }
+  }
+}

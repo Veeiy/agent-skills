@@ -1,0 +1,53 @@
+{
+  "run_id": "YYYY-MM-DD-mission-slug",
+  "mission": {
+    "name": "",
+    "objective": "",
+    "definition_of_done": [
+      { "item": "", "status": "pending" }
+    ],
+    "constraints": {
+      "budget_cap_usd": null,
+      "deadline": null,
+      "brand_tokens": null,
+      "compliance": []
+    }
+  },
+  "autonomy": "FULL",
+  "external_tier": 1,
+  "budget": { "max_waves": 8, "max_total_dispatches": 30, "max_iterate_loops": 3, "waves_used": 0, "dispatches_used": 0, "iterate_loops_used": 0 },
+  "status": "planning",
+  "waves": [
+    {
+      "wave": 1,
+      "purpose": "ideation",
+      "dispatches": [
+        {
+          "dispatch_id": "1.ideation.1",
+          "agent": "ideation",
+          "brief_summary": "",
+          "dependency_reason": "no dependencies; opening exploration",
+          "status": "queued",
+          "artifact_path": null,
+          "attempt": 1,
+          "escalations": []
+        }
+      ],
+      "gate": {
+        "verdict": null,
+        "auditor_artifact_path": null,
+        "warnings": [],
+        "fixes_routed": []
+      }
+    }
+  ],
+  "escalations_for_operator": [],
+  "learning": {
+    "lessons_applied": [],
+    "lessons_written": [],
+    "proposals_written": [],
+    "retrospective_path": null
+  },
+  "run_report_path": null,
+  "last_updated": ""
+}

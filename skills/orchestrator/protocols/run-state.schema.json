@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vantage Orchestrator Run State",
+  "description": "Single source of truth for one orchestrator run. Updated after every dispatch and every gate. Makes a run resumable across sessions.",
+  "type": "object",
+  "required": ["run_id", "mission", "autonomy", "external_tier", "status", "waves"],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "YYYY-MM-DD-mission-slug"
+    },
+    "mission": {
+      "type": "object",
+      "required": ["name", "objective", "definition_of_done"],
+      "properties": {
+        "name": { "type": "string" },
+        "objective": { "type": "string" },
+        "definition_of_done": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["item", "status"],
+            "properties": {
+              "item": { "type": "string" },
+              "status": { "type": "string", "enum": ["pending", "done", "blocked"] }
+            }
+          }
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "budget_cap_usd": { "type": ["number", "null"] },
+            "deadline": { "type": ["string", "null"] },
+            "brand_tokens": { "type": ["object", "null"] },
+            "compliance": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "autonomy": {
+      "type": "string",
+      "enum": ["FULL", "CHECKPOINT", "MANUAL"],
+      "description": "Execution autonomy dial: how the orchestrator moves through waves."
+    },
+    "external_tier": {
+      "type": "integer",
+      "enum": [1, 2, 3],
+      "description": "Blast radius on the real world. Inherits the operator's permissions file if present; otherwise defaults to Tier 1."
+    },
+    "budget": {
+      "type": "object",
+      "description": "Run-level stop conditions. Prevents an autonomous run from looping or fanning out without bound.",
+      "properties": {
+        "max_waves": { "type": "integer", "description": "Hard ceiling on waves. Default 8." },
+        "max_total_dispatches": { "type": "integer", "description": "Hard ceiling on total agent dispatches across the run. Default 30." },
+        "max_iterate_loops": { "type": "integer", "description": "Hard ceiling on test-to-iterate cycles. Default 3." },
+        "waves_used": { "type": "integer" },
+        "dispatches_used": { "type": "integer" },
+        "iterate_loops_used": { "type": "integer" }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["planning", "running", "blocked-escalated", "complete", "budget-exhausted"]
+    },
+    "waves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["wave", "purpose", "dispatches", "gate"],
+        "properties": {
+          "wave": { "type": "integer" },
+          "purpose": { "type": "string", "description": "e.g. ideation, build, test, iterate" },
+          "dispatches": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["dispatch_id", "agent", "status"],
+              "properties": {
+                "dispatch_id": { "type": "string", "description": "wave.agent.instance" },
+                "agent": {
+                  "type": "string",
+                  "enum": ["researcher", "ideation", "implementation", "website-build", "auditor", "frontend-tester", "optimizer"]
+                },
+                "brief_summary": { "type": "string" },
+                "dependency_reason": { "type": "string", "description": "why this is in this wave / what it depends on" },
+                "status": { "type": "string", "enum": ["queued", "dispatched", "complete", "partial", "blocked"] },
+                "artifact_path": { "type": ["string", "null"] },
+                "attempt": { "type": "integer", "description": "1, 2, or 3 (2 retries max)" },
+                "escalations": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          },
+          "gate": {
+            "type": "object",
+            "description": "The auditor pass for this wave.",
+            "properties": {
+              "verdict": { "type": ["string", "null"], "enum": ["PASS", "WARN", "BLOCK", null] },
+              "auditor_artifact_path": { "type": ["string", "null"] },
+              "warnings": { "type": "array", "items": { "type": "string" } },
+              "fixes_routed": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "to_agent": { "type": "string" },
+                    "fix": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "escalations_for_operator": {
+      "type": "array",
+      "description": "Safety-floor or tier items the orchestrator surfaced for the operator to act on themselves.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "raised_by": { "type": "string" },
+          "item": { "type": "string" },
+          "why_floor": { "type": "string" },
+          "resolved": { "type": "boolean" }
+        }
+      }
+    },
+    "learning": {
+      "type": "object",
+      "description": "Self-improvement bookkeeping for this run: which prior lessons were reapplied at startup, and what this run produced for the cross-run ledger at retrospect. See references/self-improvement.md.",
+      "properties": {
+        "lessons_applied": {
+          "type": "array",
+          "description": "Lesson ids pulled from the ledger and injected into this run's plan or briefs at startup.",
+          "items": { "type": "string" }
+        },
+        "lessons_written": {
+          "type": "array",
+          "description": "Lesson ids created or strengthened by this run's retrospective.",
+          "items": { "type": "string" }
+        },
+        "proposals_written": {
+          "type": "array",
+          "description": "Paths to engine-improvement proposals raised by this run's retrospective. Staged, not applied.",
+          "items": { "type": "string" }
+        },
+        "retrospective_path": {
+          "type": ["string", "null"],
+          "description": "Path to retrospective.md in this run directory."
+        }
+      }
+    },
+    "run_report_path": { "type": ["string", "null"] },
+    "last_updated": { "type": "string", "description": "ISO timestamp" }
+  }
+}

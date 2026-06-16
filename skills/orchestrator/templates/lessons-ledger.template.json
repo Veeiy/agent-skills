@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "last_updated": "",
+  "runs_seen": 0,
+  "lessons": [
+    {
+      "id": "L-0001",
+      "created": "",
+      "last_applied": null,
+      "category": "briefing",
+      "trigger": "mission has a storefront that states a price AND a separate economics or implementation track",
+      "tags": ["website", "pricing", "economics"],
+      "lesson": "Carry the single chosen price into BOTH the website-build brief and the implementation brief in the same wave. When only one gets it, the PDP price and the economics model drift and the auditor blocks the build gate.",
+      "applies_to_agents": ["website-build", "implementation", "orchestrator"],
+      "evidence": [
+        { "run_id": "SEED-example", "dispatch_id": null, "what_happened": "Seed lesson shipped with the template to show the shape of a real entry. It is a true engine failure mode (the build gate exists to catch exactly this). Retire it once real lessons accumulate." }
+      ],
+      "confidence": "low",
+      "times_applied": 0,
+      "times_confirmed": 0,
+      "times_contradicted": 0,
+      "status": "active",
+      "promoted_proposal": null
+    }
+  ]
+}

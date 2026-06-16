@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "vantage-skills",
+  "description": "Vantage agent-skills: the orchestrator engine, its specialist sub-agents, and the portable optimizer.",
+  "owner": {
+    "name": "Vantage"
+  },
+  "plugins": [
+    {
+      "name": "vantage-orchestrator",
+      "description": "Venture-agnostic orchestrator engine. Plans a mission into a wave-based DAG, deploys specialist sub-agents (researcher, ideation, implementation, website-build, auditor, frontend-tester) in parallel, gates each wave through the auditor, and runs autonomously under configurable autonomy and external-authority dials with run-budget stop conditions and a non-negotiable safety floor. Ships a portable optimizer skill.",
+      "author": {
+        "name": "Vantage"
+      },
+      "category": "productivity",
+      "source": "./"
+    }
+  ]
+}
