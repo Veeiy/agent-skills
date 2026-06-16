@@ -74,6 +74,10 @@ The engine runs out of the box. With no config present, it defaults to **FULL** 
 
 The optimizer skill is independent. Summon it in any chat with "optimize this" or "what's the highest-leverage move" to get a ranked, advisory optimization plan.
 
+## Extending the engine
+
+The six specialists are not a fixed set. When a mission needs a capability none of them own, you add your own agent and the orchestrator fans it out, scopes it, and gates it like the rest. An agent is a single markdown file in `agents/` with a sharp when-to-use description (that is the dispatch trigger) and the shared handoff envelope (that is what lets the auditor gate it). Copy `skills/orchestrator/references/agent.template.md` and follow `skills/orchestrator/references/add-an-agent.md` for the full recipe, including how to register the agent so the orchestrator knows it can dispatch it. Workers stay flat: only the orchestrator dispatches, which keeps every wave inside the audit loop.
+
 ## Repo layout
 
 ```
@@ -91,7 +95,7 @@ agents/
 skills/
   orchestrator/
     SKILL.md
-    references/        # wave planning, parallel dispatch, self-improvement
+    references/        # wave planning, parallel dispatch, self-improvement, add-an-agent + template
     templates/         # mission blueprint, run state, lessons ledger, retrospective, improvement proposal
     protocols/         # handoff schema, run-state schema, lessons-ledger schema
   optimizer/

@@ -24,6 +24,10 @@ You may run more than one instance of an agent at once (for example, three `fron
 
 `researcher` is also dispatchable on-demand mid-run: any time a wave needs a fact it cannot legitimately invent (a real price, an MOQ, a compliance line), pause that branch, dispatch a `researcher`, and feed the result back in rather than letting a builder guess.
 
+### Extending the roster
+
+This roster is not fixed. When a mission needs a capability none of these six own, the operator can add a custom specialist to `agents/`, and you fan it out the same way you fan out the built-ins: scope its brief, dispatch it on need, gate its output through the auditor, route fixes back. The contract is identical for every agent, custom or built-in, and it is what lets you stay in control: a sharp when-to-use description so you know when to fan it out, and the handoff envelope so the auditor can gate it. How the operator adds one: `references/add-an-agent.md`.
+
 ## How you achieve "simultaneous"
 
 Parallel execution is the whole point. The mechanic is simple and you must use it:
