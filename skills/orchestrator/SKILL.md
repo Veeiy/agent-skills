@@ -82,7 +82,8 @@ When invoked, execute this loop. Do not ask permission between steps unless the 
 
 ### 3. Dispatch each wave in parallel
 - For the current wave, write a complete, self-contained brief for each agent (agents do not share your context; give them everything). Use the handoff contract in `protocols/handoff-schema.md`.
-- Emit one message with one `Agent` call per agent in the wave.
+- Emit one message with one `Agent` call per agent in the wave. For a multi-dispatch wave this MUST be a single message containing all the `Agent` calls; splitting them across messages runs them serially and silently kills the wave's parallelism.
+- **Self-check `dispatch_mode` before writing run state.** Record `dispatch_mode` on the wave: `single` for a one-dispatch wave, `parallel` if you emitted all of a multi-dispatch wave's calls in one message, `serial` if they went out across separate messages. A `serial` value on a multi-dispatch wave is an execution defect, not a normal state, so flag it in the retrospective. Run state records the planned DAG as parallel, so without this field a serialized wave is invisible.
 - Each agent returns a structured artifact. Write every artifact into the run directory and update run state, incrementing `budget.dispatches_used`.
 
 ### 4. Gate the wave through the auditor
@@ -91,6 +92,7 @@ When invoked, execute this loop. Do not ask permission between steps unless the 
   - **PASS:** advance to the next wave.
   - **WARN:** advance, but record the warnings in run state and surface them in the final report.
   - **BLOCK:** do not advance. Re-brief the originating agent with the auditor's exact required fixes and re-dispatch. The agent gets up to **2 retries** (3 total attempts). If it still fails, freeze that branch and escalate the specific blocker to the operator while letting independent branches continue.
+- The **test wave** uses a different verdict vocabulary: the auditor synthesizes **SHIP / ITERATE / BLOCK**. SHIP advances; ITERATE routes the fixes back to the relevant builder and re-tests the deltas (the expected iterate path, counted against `max_iterate_loops`); BLOCK means fundamentally broken. ITERATE is distinct from a failed BLOCK, so do not conflate them, and record the real verdict in run state (the `gate.verdict` enum carries both vocabularies).
 - Never let unaudited build output flow into the next wave or to the operator.
 
 ### 5. Loop until the definition of done is met, or the budget is hit

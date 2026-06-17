@@ -85,5 +85,5 @@ Before dispatching, write the planned waves into `run-state.json` under `waves`,
 ## Gating cadence
 
 - Gate after every wave that produces build or concept artifacts.
-- You may skip a gate only after a pure-iterate wave whose deltas were already scoped by a prior auditor BLOCK, and even then prefer a quick delta re-check.
+- You may skip a gate only after a pure-iterate wave whose deltas were already scoped by a prior auditor BLOCK or ITERATE verdict, and even then prefer a quick delta re-check.
 - The gate is not optional overhead. It is the mechanism that lets you run fast and parallel without shipping contradictions.

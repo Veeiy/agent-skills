@@ -71,6 +71,7 @@
         "properties": {
           "wave": { "type": "integer" },
           "purpose": { "type": "string", "description": "e.g. ideation, build, test, iterate" },
+          "dispatch_mode": { "type": "string", "enum": ["single", "parallel", "serial"], "description": "How this wave's dispatches were emitted. single = one dispatch. parallel = multiple dispatches emitted in ONE assistant message (correct). serial = multiple dispatches emitted across separate messages, which silently loses the wave's parallelism and is an execution defect to flag in the retrospective." },
           "dispatches": {
             "type": "array",
             "items": {
@@ -95,7 +96,7 @@
             "type": "object",
             "description": "The auditor pass for this wave.",
             "properties": {
-              "verdict": { "type": ["string", "null"], "enum": ["PASS", "WARN", "BLOCK", null] },
+              "verdict": { "type": ["string", "null"], "enum": ["PASS", "WARN", "BLOCK", "SHIP", "ITERATE", null], "description": "Build and ideation gates use PASS/WARN/BLOCK. The test-wave synthesis uses SHIP/ITERATE/BLOCK: SHIP = no blocking issues, ITERATE = route fixes and re-test (the expected iterate path, distinct from a failed BLOCK)." },
               "auditor_artifact_path": { "type": ["string", "null"] },
               "warnings": { "type": "array", "items": { "type": "string" } },
               "fixes_routed": {

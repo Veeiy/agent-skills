@@ -21,6 +21,7 @@
     {
       "wave": 1,
       "purpose": "ideation",
+      "dispatch_mode": "single",
       "dispatches": [
         {
           "dispatch_id": "1.ideation.1",
