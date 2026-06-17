@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "last_updated": "2026-06-16",
+  "runs_seen": 1,
+  "lessons": [
+    {
+      "id": "L-0001",
+      "created": "2026-06-16",
+      "last_applied": null,
+      "category": "planning",
+      "trigger": "any wave that contains more than one dispatch (a parallel build wave or a persona fan-out)",
+      "tags": ["parallel", "dispatch", "execution"],
+      "lesson": "Emit every dispatch of a parallel wave in a SINGLE assistant message. Splitting them across messages runs them serially and silently loses the wave's parallelism, and run-state still records the wave as parallel so the failure is invisible. Before marking a wave done, confirm its dispatches went out in one message.",
+      "applies_to_agents": ["orchestrator"],
+      "evidence": [
+        { "run_id": "2026-06-16-ferry-landing", "dispatch_id": null, "what_happened": "Waves 2 and 3 were each emitted one dispatch per message, so the website+implementation build and the two persona tests ran serially instead of in parallel. run-state recorded both as parallel waves, so nothing caught it until the optimizer retrospect." }
+      ],
+      "confidence": "low",
+      "times_applied": 0,
+      "times_confirmed": 0,
+      "times_contradicted": 0,
+      "status": "active",
+      "promoted_proposal": "improvement-proposals/2026-06-16-record-dispatch-mode.md"
+    },
+    {
+      "id": "L-0002",
+      "created": "2026-06-16",
+      "last_applied": null,
+      "category": "safety",
+      "trigger": "a tester or stakeholder asks for a trust/compliance claim (deletion SLA, GDPR, data residency, security guarantee) on a fictional or unverified product",
+      "tags": ["grounding", "compliance", "claims"],
+      "lesson": "Decline to fabricate trust or compliance claims a product cannot back, even when a persona test says the claim would lift conversion. Route only in-scope fixes (honest qualitative reassurance, a demo placeholder). A fabricated SLA or legal claim is a grounding and hard-rule violation, not a UX improvement.",
+      "applies_to_agents": ["auditor", "website-build", "implementation"],
+      "evidence": [
+        { "run_id": "2026-06-16-ferry-landing", "dispatch_id": "3.auditor.gate", "what_happened": "Persona 2 asked for a privacy policy, deletion timeline, and data-residency disclosure. The auditor declined the fabricated versions as out-of-scope for a fictional product and routed only an honest reassurance line plus a labeled demo Privacy placeholder. This was the engine's strongest moment." }
+      ],
+      "confidence": "low",
+      "times_applied": 0,
+      "times_confirmed": 0,
+      "times_contradicted": 0,
+      "status": "active",
+      "promoted_proposal": null
+    },
+    {
+      "id": "L-0003",
+      "created": "2026-06-16",
+      "last_applied": null,
+      "category": "briefing",
+      "trigger": "a frontend-tester dispatch where the concept rests on a riskiest assumption about how a message will land",
+      "tags": ["testing", "personas", "assumptions"],
+      "lesson": "Brief frontend-testers to answer the scripted riskiest-assumption question BEFORE reading any explanatory copy, then state whether the page copy changes their answer. The before/after is the signal; asking after they have read the page contaminates the first reaction.",
+      "applies_to_agents": ["frontend-tester", "orchestrator"],
+      "evidence": [
+        { "run_id": "2026-06-16-ferry-landing", "dispatch_id": null, "what_happened": "Both personas were asked 'expiring link: safer or nervous?' before reading the page. Both started nervous and flipped to safer after the reassurance copy, which cleanly validated the concept's riskiest assumption and confirmed the reassurance line was load-bearing." }
+      ],
+      "confidence": "low",
+      "times_applied": 0,
+      "times_confirmed": 0,
+      "times_contradicted": 0,
+      "status": "active",
+      "promoted_proposal": null
+    },
+    {
+      "id": "L-0004",
+      "created": "2026-06-16",
+      "last_applied": null,
+      "category": "audit-pattern",
+      "trigger": "a test-wave synthesis based on a small number of personas (2 to 3)",
+      "tags": ["testing", "validation", "synthesis"],
+      "lesson": "Label small-N persona testing as directional, not market validation, in the synthesis. A SHIP or PASS off two personas means no blocking usability defects were found, not that the market wants the product. Keep the caveat standing so a future run does not over-read it.",
+      "applies_to_agents": ["auditor"],
+      "evidence": [
+        { "run_id": "2026-06-16-ferry-landing", "dispatch_id": "3.auditor.gate", "what_happened": "The run made a ship/iterate call off 2 personas. Correct for catching usability dead-ends, but it is not market validation; the optimizer flagged the risk of over-reading it." }
+      ],
+      "confidence": "low",
+      "times_applied": 0,
+      "times_confirmed": 0,
+      "times_contradicted": 0,
+      "status": "active",
+      "promoted_proposal": null
+    }
+  ]
+}

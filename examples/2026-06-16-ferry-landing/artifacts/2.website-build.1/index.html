@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<!--
+  Ferry landing page (demo, fictional, staging only).
+  Single self-contained file: inline CSS and JS, no external build step, no external fonts.
+  Brand tokens: teal #0E7C7B primary; amber #F2A541 reserved for the primary button and the
+  expiry tag only; text #1A1A1A on #FAFAF7; borders #E6E6E1. System font stack.
+  Copy strings (headline, subhead, value-prop labels, CTA label, price phrase) are verbatim
+  from the wave-1 concept and must not be paraphrased.
+  No real upload, no email capture, no payment. Test mode only.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ferry (demo)</title>
+  <style>
+    :root {
+      --teal: #0E7C7B;
+      --teal-dark: #0a5f5e;
+      --amber: #F2A541;
+      --amber-dark: #d98e2b;
+      --ink: #1A1A1A;
+      --bg: #FAFAF7;
+      --line: #E6E6E1;
+      --muted: #3d3d38;
+      --card: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--teal); }
+
+    .wrap {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      border-bottom: 1px solid var(--line);
+      background: var(--bg);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: var(--teal);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 15px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 15px;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .demo-pill {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--teal-dark);
+      background: rgba(14, 124, 123, 0.10);
+      border: 1px solid rgba(14, 124, 123, 0.25);
+      padding: 3px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* ---------- Buttons ---------- */
+    .btn {
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 26px;
+      transition: background 0.15s ease, transform 0.05s ease;
+    }
+    .btn:active { transform: translateY(1px); }
+    /* Amber is reserved for the primary CTA only. */
+    .btn-primary {
+      background: var(--amber);
+      color: #3a2a05;
+    }
+    .btn-primary:hover { background: var(--amber-dark); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--teal);
+      border: 1px solid var(--teal);
+      padding: 13px 25px;
+    }
+    .btn-ghost:hover { background: rgba(14, 124, 123, 0.07); }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      padding: 84px 0 64px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(34px, 6vw, 56px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      margin: 0 auto 20px;
+      max-width: 14ch;
+      font-weight: 700;
+    }
+    .hero p.sub {
+      font-size: clamp(17px, 2.4vw, 20px);
+      color: var(--muted);
+      max-width: 60ch;
+      margin: 0 auto 34px;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .reassure {
+      margin-top: 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* ---------- Sections ---------- */
+    section { padding: 56px 0; }
+    .section-head {
+      text-align: center;
+      max-width: 56ch;
+      margin: 0 auto 40px;
+    }
+    .section-head h2 {
+      font-size: clamp(26px, 4vw, 34px);
+      letter-spacing: -0.01em;
+      margin: 0 0 10px;
+      font-weight: 700;
+    }
+    .section-head p {
+      color: var(--muted);
+      margin: 0;
+      font-size: 17px;
+    }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--teal);
+      margin: 0 0 10px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 26px 24px;
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 19px;
+      letter-spacing: -0.01em;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15.5px;
+    }
+    .card .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(14, 124, 123, 0.10);
+      color: var(--teal);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    /* ---------- How it works ---------- */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      counter-reset: step;
+    }
+    .step {
+      position: relative;
+      padding: 26px 22px 24px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--card);
+    }
+    .step .num {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: #fff;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-size: 15px;
+    }
+    .step h3 { margin: 0 0 6px; font-size: 18px; }
+    .step p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    /* ---------- Pricing ---------- */
+    .pricing { background: rgba(14, 124, 123, 0.04); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .tiers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .tier {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 30px 28px;
+      display: flex;
+      flex-direction: column;
+    }
+    .tier.featured { border-color: var(--teal); box-shadow: 0 0 0 1px var(--teal); }
+    .tier .tier-name { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal); margin: 0 0 8px; }
+    .tier .price { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 4px; }
+    .tier .price small { font-size: 15px; font-weight: 400; color: var(--muted); }
+    .tier ul { list-style: none; padding: 0; margin: 16px 0 24px; }
+    .tier li { padding: 7px 0 7px 26px; position: relative; color: var(--ink); font-size: 15.5px; }
+    .tier li::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 14px;
+      width: 14px; height: 8px;
+      border-left: 2px solid var(--teal);
+      border-bottom: 2px solid var(--teal);
+      transform: rotate(-45deg);
+    }
+    .tier .btn { margin-top: auto; width: 100%; text-align: center; }
+    .tier-note { text-align: center; color: var(--muted); font-size: 13.5px; margin: 22px auto 0; max-width: 60ch; }
+
+    /* ---------- Expiry tag (amber-reserved differentiator cue) ---------- */
+    .expiry-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(242, 165, 65, 0.22);
+      border: 1px solid var(--amber-dark);
+      color: #5c3a02;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+    .expiry-tag .dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--amber);
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 38px 0 46px;
+      color: var(--muted);
+      font-size: 14.5px;
+    }
+    .foot-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .foot-demo {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: rgba(14, 124, 123, 0.06);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+    .foot-demo strong { color: var(--ink); }
+
+    /* ---------- Modal (test-mode CTA) ---------- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 26, 26, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      padding: 28px 26px 26px;
+      border: 1px solid var(--line);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .modal-head h3 { margin: 0; font-size: 21px; letter-spacing: -0.01em; }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 0 4px;
+    }
+    .modal-close:hover { color: var(--ink); }
+    /* Visible keyboard focus for the modal controls (close button, mode toggle, chips). */
+    .modal-close:focus-visible,
+    .seg button:focus-visible,
+    .mode-toggle button:focus-visible,
+    .btn-create:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+    .modal-sub { margin: 0 0 18px; color: var(--muted); font-size: 14.5px; }
+
+    .fake-file {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      padding: 14px;
+      background: var(--card);
+      margin-bottom: 20px;
+    }
+    .fake-file .fic {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: rgba(14, 124, 123, 0.10); color: var(--teal);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px;
+    }
+    .fake-file .fmeta { font-size: 14px; }
+    .fake-file .fmeta .fname { font-weight: 600; }
+    .fake-file .fmeta .fsize { color: var(--muted); font-size: 13px; }
+
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .seg {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .seg button {
+      font: inherit;
+      font-size: 14px;
+      padding: 9px 14px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .seg button[aria-pressed="true"] {
+      border-color: var(--teal);
+      background: rgba(14, 124, 123, 0.10);
+      color: var(--teal-dark);
+      font-weight: 600;
+    }
+    .mode-toggle {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .mode-toggle button {
+      font: inherit;
+      font-size: 13.5px;
+      padding: 8px 14px;
+      border: none;
+      background: var(--card);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .mode-toggle button[aria-pressed="true"] {
+      background: var(--teal);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .preview-line {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 14px;
+      margin: 4px 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .preview-line code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--ink);
+      font-size: 13px;
+      word-break: break-all;
+    }
+
+    .btn-create {
+      width: 100%;
+      background: var(--teal);
+      color: #fff;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font: inherit;
+      font-weight: 600;
+      transition: background 0.15s ease, transform 0.05s ease;
+    }
+    .btn-create:hover { background: var(--teal-dark); }
+    .btn-create:active { transform: translateY(1px); }
+    .btn-create.copied { background: var(--teal-dark); }
+    /* Revealed demo link block (shown after the demo link is created). */
+    .created-link {
+      display: none;
+      margin: 14px 0 0;
+      padding: 14px;
+      border: 1px solid var(--teal);
+      border-radius: 10px;
+      background: rgba(14, 124, 123, 0.08);
+    }
+    .created-link.show { display: block; }
+    .created-link .cl-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .created-link code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--ink);
+      font-size: 13px;
+      word-break: break-all;
+    }
+    .created-link .cl-copied {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--teal-dark);
+    }
+    .demo-caption {
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--muted);
+      margin: 10px 0 0;
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 760px) {
+      .grid-3, .steps { grid-template-columns: 1fr; }
+      .tiers { grid-template-columns: 1fr; }
+      .nav-links a:not(.demo-pill) { display: none; }
+      .hero { padding: 60px 0 44px; }
+      section { padding: 44px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header>
+    <div class="wrap">
+      <nav class="nav">
+        <a class="brand" href="#top">
+          <span class="brand-mark">F</span>
+          Ferry
+        </a>
+        <div class="nav-links">
+          <a href="#how">How it works</a>
+          <a href="#pricing">Pricing</a>
+          <span class="demo-pill">Demo</span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <main id="top">
+    <section class="hero">
+      <div class="wrap">
+        <h1>Send the file. Set the expiry. Done.</h1>
+        <p class="sub">Ferry gives your delivery a link that disappears after a set number of days or downloads, so client work does not sit on a server forever.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" data-open-send>Send a file</button>
+          <a class="btn btn-ghost" href="#how">See how it works</a>
+        </div>
+        <p class="reassure">You set the limit. Need it longer or want to resend, you stay in control. When the link expires, the file is removed.</p>
+      </div>
+    </section>
+
+    <!-- ===== Value props ===== -->
+    <section id="value">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Why Ferry</p>
+          <h2>A send that cleans up after itself.</h2>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <span class="icon">&#9201;</span>
+            <h3>Expires on your terms</h3>
+            <p>Choose a time limit or a download count when you send. When the limit is hit, the link stops working.</p>
+          </div>
+          <div class="card">
+            <span class="icon">&#128274;</span>
+            <h3>No account to grab it</h3>
+            <p>Your client clicks the link and downloads. No sign-up, no app, no friction on their end.</p>
+          </div>
+          <div class="card">
+            <span class="icon">&#10022;</span>
+            <h3>Clean and out of the way</h3>
+            <p>Drop a file, get a link, share it. No folders to manage and no inbox to clean up later.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== How it works ===== -->
+    <section id="how">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">How it works</p>
+          <h2>Three steps, then you are done.</h2>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <span class="num">1</span>
+            <h3>Pick a file</h3>
+            <p>Choose the deliverable you want to hand off. One file, no folders to set up.</p>
+          </div>
+          <div class="step">
+            <span class="num">2</span>
+            <h3>Set the expiry</h3>
+            <p>Pick a number of days or a download count. The link retires itself once the limit is reached.</p>
+          </div>
+          <div class="step">
+            <span class="num">3</span>
+            <h3>Share the link</h3>
+            <p>Send the link any way you like. Your client downloads with no account and no install.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Pricing ===== -->
+    <section id="pricing" class="pricing">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Pricing</p>
+          <h2>Start free. Grow when you need to.</h2>
+          <p>Two simple tiers. This is a demo, so nothing here charges you.</p>
+        </div>
+        <div class="tiers">
+          <div class="tier">
+            <p class="tier-name">Free</p>
+            <p class="price">Free <small>forever</small></p>
+            <span class="expiry-tag"><span class="dot"></span> 7-day expiry</span>
+            <ul>
+              <li>Send files up to 2GB</li>
+              <li>Links expire after 7 days</li>
+              <li>No account needed to download</li>
+            </ul>
+            <button class="btn btn-ghost" data-open-send>Try it</button>
+          </div>
+          <div class="tier featured">
+            <p class="tier-name">Pro</p>
+            <p class="price">a flat low monthly</p>
+            <span class="expiry-tag"><span class="dot"></span> custom expiry</span>
+            <ul>
+              <li>Larger files for bigger deliverables</li>
+              <li>Custom expiry by days or by download count</li>
+              <li>Everything in Free</li>
+            </ul>
+            <button class="btn btn-primary" data-open-send>Send a file</button>
+          </div>
+        </div>
+        <p class="tier-note">Demo pricing for display only. No checkout, no payment, and no card is collected anywhere on this page.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-row">
+        <a class="brand" href="#top">
+          <span class="brand-mark">F</span>
+          Ferry
+        </a>
+        <div class="nav-links">
+          <a href="#how">How it works</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#" title="Demo placeholder, not a real policy">Privacy</a>
+        </div>
+      </div>
+      <div class="foot-demo">
+        <strong>Demo, not a real service.</strong> Ferry is a fictional product shown for a staging build. It does not upload, store, or send files, it collects no email, and it processes no payment. Every link and price on this page is illustrative only.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Test-mode send modal ===== -->
+  <div class="modal-overlay" id="sendModal" role="dialog" aria-modal="true" aria-labelledby="sendTitle">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="sendTitle">Set the expiry</h3>
+        <button class="modal-close" data-close-send aria-label="Close">&times;</button>
+      </div>
+      <p class="modal-sub">This is a demo flow. Pick how the link should retire. Nothing is uploaded or sent.</p>
+
+      <div class="fake-file">
+        <span class="fic">PDF</span>
+        <div class="fmeta">
+          <div class="fname">client-deliverable.pdf</div>
+          <div class="fsize">8.4 MB &middot; sample file</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Expire by</label>
+        <div class="mode-toggle" id="modeToggle">
+          <button type="button" data-mode="days" aria-pressed="true">Days</button>
+          <button type="button" data-mode="downloads" aria-pressed="false">Downloads</button>
+        </div>
+        <div class="seg" id="segDays">
+          <button type="button" data-val="1" aria-pressed="false">1 day</button>
+          <button type="button" data-val="3" aria-pressed="true">3 days</button>
+          <button type="button" data-val="7" aria-pressed="false">7 days</button>
+        </div>
+        <div class="seg" id="segDownloads" style="display:none;">
+          <button type="button" data-val="1" aria-pressed="false">1 download</button>
+          <button type="button" data-val="3" aria-pressed="true">3 downloads</button>
+          <button type="button" data-val="10" aria-pressed="false">10 downloads</button>
+        </div>
+      </div>
+
+      <div class="preview-line">
+        <code id="linkPreview">ferry.link/demo-7k2p9</code>
+        <span class="expiry-tag"><span class="dot"></span> <span id="expiryLabel">expires in 3 days</span></span>
+      </div>
+
+      <button type="button" class="btn-create" id="createLink">Create demo link</button>
+      <div class="created-link" id="createdLink" aria-live="polite">
+        <div class="cl-row">
+          <code id="createdLinkUrl">ferry.link/demo-7k2p9</code>
+          <span class="cl-copied" id="copiedNote">Copied</span>
+        </div>
+      </div>
+      <p class="demo-caption">Demo only. This is a sample link, not a real upload. Nothing is sent, stored, or charged.</p>
+    </div>
+  </div>
+
+  <script>
+    // ---- Test-mode CTA: open and close the send modal ----
+    var modal = document.getElementById('sendModal');
+
+    function openModal() {
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('[data-open-send]').forEach(function (el) {
+      el.addEventListener('click', openModal);
+    });
+    document.querySelectorAll('[data-close-send]').forEach(function (el) {
+      el.addEventListener('click', closeModal);
+    });
+    // Click the dimmed backdrop to dismiss.
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) closeModal();
+    });
+    // Escape key closes too.
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+
+    // ---- Expiry picker state (display only, no upload) ----
+    var mode = 'days';
+    var value = '3';
+    var expiryLabel = document.getElementById('expiryLabel');
+    var segDays = document.getElementById('segDays');
+    var segDownloads = document.getElementById('segDownloads');
+
+    function noun() {
+      if (mode === 'days') {
+        return value === '1' ? '1 day' : value + ' days';
+      }
+      return value === '1' ? '1 download' : value + ' downloads';
+    }
+    function refreshLabel() {
+      expiryLabel.textContent = (mode === 'days' ? 'expires in ' : 'expires after ') + noun();
+    }
+
+    // Mode toggle (Days vs Downloads)
+    document.querySelectorAll('#modeToggle button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.querySelectorAll('#modeToggle button').forEach(function (x) {
+          x.setAttribute('aria-pressed', 'false');
+        });
+        b.setAttribute('aria-pressed', 'true');
+        mode = b.getAttribute('data-mode');
+        if (mode === 'days') {
+          segDays.style.display = 'flex';
+          segDownloads.style.display = 'none';
+          value = segDays.querySelector('[aria-pressed="true"]').getAttribute('data-val');
+        } else {
+          segDays.style.display = 'none';
+          segDownloads.style.display = 'flex';
+          value = segDownloads.querySelector('[aria-pressed="true"]').getAttribute('data-val');
+        }
+        refreshLabel();
+      });
+    });
+
+    // Value chips inside each segment
+    function wireSeg(segId) {
+      document.querySelectorAll('#' + segId + ' button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          document.querySelectorAll('#' + segId + ' button').forEach(function (x) {
+            x.setAttribute('aria-pressed', 'false');
+          });
+          b.setAttribute('aria-pressed', 'true');
+          value = b.getAttribute('data-val');
+          refreshLabel();
+        });
+      });
+    }
+    wireSeg('segDays');
+    wireSeg('segDownloads');
+
+    refreshLabel();
+
+    // ---- Create demo link (client-side only: no upload, no network, no real link) ----
+    var createBtn = document.getElementById('createLink');
+    var createdBlock = document.getElementById('createdLink');
+    var copiedNote = document.getElementById('copiedNote');
+    var demoLink = 'ferry.link/demo-7k2p9';
+
+    // Copy without any network: try the local Clipboard API, fall back to execCommand.
+    function copyDemoLink(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).then(function () { return true; })
+          .catch(function () { return legacyCopy(text); });
+      }
+      return Promise.resolve(legacyCopy(text));
+    }
+    function legacyCopy(text) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'absolute';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        return ok;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    createBtn.addEventListener('click', function () {
+      // Reveal the existing fake demo link.
+      createdBlock.classList.add('show');
+      createBtn.classList.add('copied');
+      createBtn.textContent = 'Demo link created';
+      // Copy it locally and confirm.
+      copyDemoLink(demoLink).then(function (ok) {
+        copiedNote.textContent = ok ? 'Copied' : 'Select to copy';
+      });
+    });
+  </script>
+</body>
+</html>

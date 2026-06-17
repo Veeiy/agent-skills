@@ -1,0 +1,82 @@
+{
+  "run_id": "2026-06-16-ferry-landing",
+  "mission": {
+    "name": "Ferry landing page + launch one-pager",
+    "objective": "Ship a single-page marketing site and a launch one-pager for Ferry (expiring file-share links), built to local/staging in test mode, validated by 2 personas, consistent across both deliverables.",
+    "definition_of_done": [
+      { "item": "Winning concept selected and audited (positioning, hero, 3 value props, CTA)", "status": "done" },
+      { "item": "Landing page built to local (index.html, responsive, click-through, test-mode signup)", "status": "done" },
+      { "item": "Launch one-pager built (audience, 3 channels, pre-launch checklist)", "status": "done" },
+      { "item": "Cross-consistency audited (page claims == one-pager)", "status": "done" },
+      { "item": "2 persona tests run, findings synthesized, ship/iterate decision", "status": "done" },
+      { "item": "Run report + retrospective delivered, lessons written to the ledger", "status": "done" }
+    ],
+    "constraints": {
+      "budget_cap_usd": null,
+      "deadline": null,
+      "brand_tokens": null,
+      "compliance": ["no em dashes", "test mode only: no real signup/payment/email capture", "fictional product: no real-service claims"]
+    }
+  },
+  "autonomy": "FULL",
+  "external_tier": 1,
+  "budget": { "max_waves": 8, "max_total_dispatches": 30, "max_iterate_loops": 3, "waves_used": 5, "dispatches_used": 10, "iterate_loops_used": 1 },
+  "status": "complete",
+  "preflight": {
+    "checked": true,
+    "notes": "Tier 1 staging build. Agents need file-write (implementation, website-build) and read access: available. Research wave skipped, grounding pre-supplied in blueprint. No external tools required."
+  },
+  "waves": [
+    {
+      "wave": 1,
+      "purpose": "ideation",
+      "dispatches": [
+        { "dispatch_id": "1.ideation.1", "agent": "ideation", "brief_summary": "Frame Ferry positioning + page concept: positioning line, hero, 3 value props, primary CTA", "dependency_reason": "no dependencies; opening concept off the blueprint grounding", "status": "complete", "artifact_path": "artifacts/1.ideation.1.md", "attempt": 1, "escalations": [] }
+      ],
+      "gate": { "verdict": "PASS", "auditor_artifact_path": "artifacts/1.auditor.gate.md", "warnings": [], "fixes_routed": [] }
+    },
+    {
+      "wave": 2,
+      "purpose": "build (parallel: website + implementation)",
+      "dispatches": [
+        { "dispatch_id": "2.website-build.1", "agent": "website-build", "brief_summary": "Build index.html landing page from the chosen concept; test-mode signup", "dependency_reason": "needs the audited concept from wave 1", "status": "complete", "artifact_path": "artifacts/2.website-build.1/index.html", "attempt": 1, "escalations": [] },
+        { "dispatch_id": "2.implementation.1", "agent": "implementation", "brief_summary": "Build the launch one-pager (audience, 3 channels, pre-launch checklist)", "dependency_reason": "needs the audited concept from wave 1; independent of the website build", "status": "complete", "artifact_path": "artifacts/2.implementation.1.md", "attempt": 1, "escalations": [] }
+      ],
+      "gate": { "verdict": "PASS", "auditor_artifact_path": "artifacts/2.auditor.gate.md", "warnings": ["Positioning sentence lives in the one-pager, not verbatim on the page; correct placement, not drift", "Unvalidated assumption: expiry reads as relief not loss; testers must probe with the scripted safer-or-nervous question and confirm the reassurance line lands"], "fixes_routed": [] }
+    },
+    {
+      "wave": 3,
+      "purpose": "test (parallel personas)",
+      "dispatches": [
+        { "dispatch_id": "3.frontend-tester.1", "agent": "frontend-tester", "brief_summary": "Persona: freelance designer sending a client a one-off file. Click-through + a11y on the built page.", "dependency_reason": "needs the built page from wave 2", "status": "complete", "artifact_path": "artifacts/3.frontend-tester.1.md", "attempt": 1, "escalations": [] },
+        { "dispatch_id": "3.frontend-tester.2", "agent": "frontend-tester", "brief_summary": "Persona: privacy-conscious first-timer who distrusts file-share tools. Trust + clarity read.", "dependency_reason": "needs the built page from wave 2", "status": "complete", "artifact_path": "artifacts/3.frontend-tester.2.md", "attempt": 1, "escalations": [] }
+      ],
+      "gate": { "verdict": "BLOCK", "auditor_artifact_path": "artifacts/3.auditor.gate.md", "warnings": ["Test-wave synthesis verdict was ITERATE; mapped to BLOCK because run-state gate.verdict enum lacks SHIP/ITERATE vocabulary (see improvement proposal)", "Both personas: task not completed, would not buy as-is"], "fixes_routed": [ { "to_agent": "website-build", "fix": "Make the disabled CTA an active Create-demo-link that reveals/copies the existing fake link ferry.link/demo-7k2p9 with a Copied confirmation; no upload, no network" }, { "to_agent": "website-build", "fix": "Darken --muted so subhead/cards/footer/modal clear 4.5:1 AA" }, { "to_agent": "website-build", "fix": "Fix .expiry-tag contrast to 4.5:1 AA" }, { "to_agent": "website-build", "fix": "Add a visible focus-visible style for .modal-close and the modal chips" }, { "to_agent": "website-build", "fix": "Append an honest file-removed-on-expiry line to the reassurance copy and add a demo Privacy placeholder link in the footer; no fabricated SLA/GDPR/residency claim" } ] }
+    },
+    {
+      "wave": 4,
+      "purpose": "iterate (route wave-3 test fixes to website-build; retry 1 of 2 on this branch)",
+      "dispatches": [
+        { "dispatch_id": "4.website-build.2", "agent": "website-build", "brief_summary": "Apply the 5 auditor-routed fixes: active demo Create-link, AA contrast on --muted + expiry-tag, modal focus styles, honest reassurance + demo Privacy link", "dependency_reason": "iterate on the wave-3 ITERATE verdict; same website branch, attempt 2", "status": "complete", "artifact_path": "artifacts/2.website-build.1/index.html", "attempt": 2, "escalations": [] }
+      ],
+      "gate": { "verdict": "PASS", "auditor_artifact_path": "artifacts/4.auditor.gate.md", "warnings": [], "fixes_routed": [] }
+    },
+    {
+      "wave": 5,
+      "purpose": "retrospect (optimizer strategic read; meta-step, exempt from dispatch cap)",
+      "dispatches": [
+        { "dispatch_id": "5.optimizer.1", "agent": "optimizer", "brief_summary": "Strategic read over the whole run for the retrospective and ledger lessons", "dependency_reason": "runs after the final gate; mines the completed run", "status": "complete", "artifact_path": "artifacts/5.optimizer.1.md", "attempt": 1, "escalations": [] }
+      ],
+      "gate": { "verdict": null, "auditor_artifact_path": null, "warnings": [], "fixes_routed": [] }
+    }
+  ],
+  "escalations_for_operator": [],
+  "learning": {
+    "lessons_applied": [],
+    "lessons_written": ["L-0001", "L-0002", "L-0003", "L-0004"],
+    "proposals_written": ["../orchestrator-memory/improvement-proposals/2026-06-16-record-dispatch-mode.md", "../orchestrator-memory/improvement-proposals/2026-06-16-reconcile-verdict-vocabulary.md"],
+    "retrospective_path": "retrospective.md"
+  },
+  "run_report_path": "run-report.md",
+  "last_updated": "2026-06-16T02:00:00Z"
+}
