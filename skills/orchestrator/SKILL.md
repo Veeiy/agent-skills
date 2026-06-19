@@ -137,15 +137,19 @@ When invoked, execute this loop. Do not ask permission between steps unless the 
 
 ## Run budget and stop conditions
 
-FULL autonomy must not mean an unbounded loop. Read the budget from the blueprint into run state at startup, enforce it on every wave, and stop cleanly when any cap is hit.
+FULL autonomy must not mean an unbounded loop. Read the budget from the blueprint into run state at startup, enforce it on every **dispatch**, and stop cleanly when any cap is hit. `max_total_dispatches` is the single global ceiling on API spend for the run: every agent call is a paid, often multi-turn API request, so this one number is the hard cap that makes runaway cost impossible. The operator sets it in the blueprint; the engine never overrides it upward mid-run.
 
 Defaults (raise for large missions in the blueprint):
+- **max_total_dispatches: 30** (the global hard cap on agent dispatches across the run, the runaway-API ceiling)
 - **max_waves: 8** (hard ceiling on total waves)
-- **max_total_dispatches: 30** (hard ceiling on agent dispatches across the run)
 - **max_iterate_loops: 3** (hard ceiling on test-to-iterate cycles)
+- **max_agents_synthesized: 3** (hard ceiling on new Tier 2 specialists minted in one run)
 
-Enforcement:
-- Before dispatching any wave, check `waves_used`, `dispatches_used`, and `iterate_loops_used` against the caps. Increment the counters as you dispatch.
+What counts as a dispatch: every `Agent` call the run makes, without exception. Wave workers, every `auditor` gate, every BLOCK retry, any on-demand `researcher`, and a synthesis Mode A hyperfocus all increment `dispatches_used`. There is exactly one exemption: the single retrospective `optimizer` call in step 6, which is itself bounded to one call with no iteration (see `references/self-improvement.md`). Nothing else is exempt; gates and retries are dispatches and count.
+
+Enforcement (per dispatch, not per wave):
+- **Hard gate before every dispatch.** Immediately before emitting any `Agent` call, check `dispatches_used < max_total_dispatches`. If the call would meet or exceed the cap, do not emit it; stop cleanly (see below). This gate runs before each individual dispatch, including mid-wave gates and retries, so no fan-out, retry storm, or on-demand call can slip past the ceiling between wave boundaries. Increment `dispatches_used` the moment a call is emitted.
+- **Also gate the loop structure.** Before starting a new wave, check `waves_used < max_waves`. Before routing a test-to-iterate cycle, check `iterate_loops_used < max_iterate_loops`. Before minting a new specialist, check `agents_synthesized_used < max_agents_synthesized`; at that cap do not mint, fall back to hyperfocusing a core agent in-brief (still a counted dispatch). Increment each counter as you cross it.
 - The test-to-iterate cycle (Wave 3 -> Wave 4 -> re-test) counts one iterate loop each pass. Do not loop a failing branch forever; the 2-retry per-branch cap and `max_iterate_loops` both bound it.
 - When any cap is reached: stop dispatching, set run state `status` to `budget-exhausted`, write the run report with what is done, what remains, and the exact next action, and surface it to the operator. Do not silently continue past a cap.
 

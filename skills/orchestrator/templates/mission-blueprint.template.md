@@ -37,12 +37,13 @@ List the concrete things that must be true for this run to be finished. Each bec
 - Independent of the autonomy dial. FULL autonomy at Tier 1 is the normal fast-and-safe default.
 
 ## Run budget (stop conditions)
-Caps that keep an autonomous run from looping or fanning out without bound. When any cap is hit, the orchestrator stops cleanly, sets status to `budget-exhausted`, writes the run report with what is done and what remains, and surfaces it to the operator.
+Caps that keep an autonomous run from looping or fanning out without bound. These are the operator's runaway-API guardrails: set them here and the engine cannot exceed them. When any cap is hit, the orchestrator stops cleanly, sets status to `budget-exhausted`, writes the run report with what is done and what remains, and surfaces it to the operator.
+- **Max total dispatches:** 30. The single global ceiling on agent dispatches across the whole run, checked before EVERY dispatch (wave workers, auditor gates, BLOCK retries, on-demand research, synthesis). Every dispatch is a paid API call, so this one number is your hard cap against runaway cost. Lower it for a tight run, raise it for a large mission.
 - **Max waves:** 8. Hard ceiling on the number of waves the run will execute.
-- **Max total dispatches:** 30. Hard ceiling on total agent dispatches across the whole run.
-- **Max iterate loops:** 3. Hard ceiling on test-to-iterate cycles.
+- **Max iterate loops:** 3. Hard ceiling on test-to-iterate (self-correction) cycles.
+- **Max agents synthesized:** 3. Hard ceiling on new specialists the run may mint (Tier 2). At the cap the engine reuses or hyperfocuses existing agents instead of minting more.
 
-These defaults are sane for most missions and can be raised for large missions. The live counters (`waves_used`, `dispatches_used`, `iterate_loops_used`) live in `run-state.json` under `budget`.
+These defaults are sane for most missions and can be raised for large missions. The live counters (`dispatches_used`, `waves_used`, `iterate_loops_used`, `agents_synthesized_used`) live in `run-state.json` under `budget`. The one dispatch that does not count against the cap is the single bounded retrospective optimizer pass at the end of the run.
 
 ## Self-bootstrapping
 If no permissions file or operator config is found in the environment, the engine defaults to FULL execution autonomy at Tier 1 with the universal safety floor, and reads all hard rules from this blueprint. Nothing else is required to start a run.

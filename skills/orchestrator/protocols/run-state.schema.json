@@ -49,14 +49,16 @@
     },
     "budget": {
       "type": "object",
-      "description": "Run-level stop conditions. Prevents an autonomous run from looping or fanning out without bound.",
+      "description": "Run-level stop conditions. Prevents an autonomous run from looping or fanning out without bound. max_total_dispatches is the single global ceiling on API spend, checked before EVERY dispatch (see SKILL.md enforcement).",
       "properties": {
+        "max_total_dispatches": { "type": "integer", "description": "Global hard ceiling on total agent dispatches across the run, checked before EVERY dispatch (workers, auditor gates, retries, on-demand researcher, synthesis Mode A). The runaway-API ceiling. Default 30." },
         "max_waves": { "type": "integer", "description": "Hard ceiling on waves. Default 8." },
-        "max_total_dispatches": { "type": "integer", "description": "Hard ceiling on total agent dispatches across the run. Default 30." },
         "max_iterate_loops": { "type": "integer", "description": "Hard ceiling on test-to-iterate cycles. Default 3." },
+        "max_agents_synthesized": { "type": "integer", "description": "Hard ceiling on new Tier 2 specialists minted in one run. Default 3." },
         "waves_used": { "type": "integer" },
-        "dispatches_used": { "type": "integer" },
-        "iterate_loops_used": { "type": "integer" }
+        "dispatches_used": { "type": "integer", "description": "Incremented on every dispatch except the single bounded retrospective optimizer call." },
+        "iterate_loops_used": { "type": "integer" },
+        "agents_synthesized_used": { "type": "integer" }
       }
     },
     "status": {

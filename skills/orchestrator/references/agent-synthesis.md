@@ -45,6 +45,8 @@ Mint a new agent only if all of these hold:
 
 If any of these fails, drop back up the ladder. The cheapest correct answer is almost always reuse.
 
+Synthesis is also budget-bounded. Minting counts against `max_agents_synthesized` (default 3), and every synthesis dispatch counts against `max_total_dispatches` like any other dispatch. At the synthesis cap, stop minting and reuse or hyperfocus an existing agent instead. See the run budget in `SKILL.md`.
+
 ## Two modes of synthesis
 
 A newly written `agents/*.md` file is not registered as a dispatchable `subagent_type` until the session reloads. The runtime loads agent definitions at startup. So synthesis has two modes, and you use both:

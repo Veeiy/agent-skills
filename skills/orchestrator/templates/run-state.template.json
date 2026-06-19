@@ -15,7 +15,7 @@
   },
   "autonomy": "FULL",
   "external_tier": 1,
-  "budget": { "max_waves": 8, "max_total_dispatches": 30, "max_iterate_loops": 3, "waves_used": 0, "dispatches_used": 0, "iterate_loops_used": 0 },
+  "budget": { "max_total_dispatches": 30, "max_waves": 8, "max_iterate_loops": 3, "max_agents_synthesized": 3, "dispatches_used": 0, "waves_used": 0, "iterate_loops_used": 0, "agents_synthesized_used": 0 },
   "status": "planning",
   "waves": [
     {
