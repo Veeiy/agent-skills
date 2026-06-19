@@ -108,5 +108,5 @@ When you write a Mode B agent to the source repo:
 
 Whatever you mint, record it so the run is legible:
 - On the dispatch in run-state: note whether it ran as a hyperfocused core agent (Mode A) or a registered specialist (Mode B), and the synthesized role name.
-- In the run report: list every agent synthesized this run, the gap that opened it, and whether it was persisted.
+- In the run report: list every agent synthesized this run, the gap that opened it, and whether it was persisted. For each persisted (Mode B) agent, state the operator action that promotes it to a first-class dispatchable specialist: restart the session. A new `agents/*.md` file is not a dispatchable `subagent_type` until a fresh session re-scans `agents/` at startup; subagent types do not hot-reload mid-session (not even via `/reload-plugins`, which refreshes skills and hooks but not subagent definitions), so the engine cannot promote them itself. Until the restart, the capability is still available in-run through Mode A.
 - In the retrospective: a synthesized agent that earned its keep is a lesson (a recurring capability the engine should keep reaching for); a synthesized agent that was a one-off and should not have been persisted is also a lesson. Feed both back per `references/self-improvement.md`.

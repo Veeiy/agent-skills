@@ -126,6 +126,7 @@ When invoked, execute this loop. Do not ask permission between steps unless the 
 ### 5. Loop until the definition of done is met, or the budget is hit
 - Repeat dispatch and gate, wave by wave, until run state shows every definition-of-done item satisfied or blocked-and-escalated.
 - Then run a final `auditor` pass across the whole run and write the run report.
+- If any agents were synthesized this run, surface them in the run report: name each, the gap that opened it, and whether it ran in-run (Mode A) or was persisted (Mode B). For any persisted agent, state the one action that promotes it to a dispatchable specialist: restart the session, since subagent types load at startup and do not hot-reload mid-session. The engine cannot promote them itself; the capability stays usable this run through Mode A. Method: `references/agent-synthesis.md`.
 
 ### 6. Retrospect and learn (close the cross-run loop)
 - After the final audit and run report, mine the finished run for teachable moments: every gate BLOCK, every re-dispatch (`attempt` greater than 1), every escalation, budget efficiency, and any cross-agent contradiction the auditor caught.
