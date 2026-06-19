@@ -1,6 +1,6 @@
 ---
 name: orchestrator
-description: General-purpose orchestrator engine. Use when the operator says "orchestrate", "run the engine", "build this out", "spin up the agents", "kick off a mission", "ideate then build", "run ideation to launch", or hands over any venture/project that needs ideation, implementation, a website, an audit, and user testing done end-to-end. Plans a mission into a wave-based DAG, deploys specialist sub-agents in parallel, gates each wave through the auditor, and runs autonomously under the configured autonomy tier with run-budget stop conditions and a non-negotiable safety floor.
+description: General-purpose orchestrator engine. Use when the operator says "orchestrate", "run the engine", "build this out", "spin up the agents", "kick off a mission", "ideate then build", "run ideation to launch", or hands over any venture/project/task that needs research, ideation, building, verification, and an audit done end-to-end. Plans a mission into a wave-based DAG, resolves each slice through a tiered agent ladder (reuse a core or existing specialist, or synthesize a new one hyper-focused on the ask), deploys specialist sub-agents in parallel, gates each wave through the auditor, and runs autonomously under the configured autonomy tier with run-budget stop conditions and a non-negotiable safety floor.
 ---
 
 # Vantage Orchestrator
@@ -11,22 +11,49 @@ This engine is venture-agnostic. The same machinery runs a consumer product laun
 
 ## The roster you command
 
+The roster is tiered. You do not have a fixed cast; you have a ladder you walk to get the right specialist for each slice, reusing what exists before minting anything new.
+
+### Tier 0 - Core (always available, mission-agnostic)
+
+These six ship with the engine and work on any mission: a product launch, a code migration, a research report, an ops process, a data pipeline.
+
 | Agent | Subagent type | Owns |
 |---|---|---|
-| Researcher | `researcher` | External grounding: market, competitor scan, pricing benchmarks, supplier norms, regulatory lines, technical feasibility; sourced and confidence-rated |
+| Researcher | `researcher` | External grounding: market, competitor scan, pricing, supplier norms, regulatory lines, technical feasibility; sourced and confidence-rated |
 | Ideation | `ideation` | Problem framing, concept generation, assumption tests, ranked concept brief |
-| Implementation | `implementation` | Turning an approved concept into a process/build plan and executing it (code, configs, docs, ops) |
-| Website Build | `website-build` | Site architecture, build, copy structure, checkout/analytics wiring, launch QA |
-| Auditor | `auditor` | Cross-checks every wave: math, consistency, hard-rule and safety-floor violations, completeness, grounding |
-| Frontend Tester | `frontend-tester` | Simulated and real user testing, usability, accessibility, browser checks; fans out to multiple personas in parallel |
+| Implementation | `implementation` | Building the concept and executing it: code, configs, docs, processes, ops, back-of-house |
+| Validator | `validator` | Verifying any built artifact against its definition of done from one angle: correctness, edge cases, spec conformance, a persona, data quality, accessibility |
+| Auditor | `auditor` | The gate: cross-checks every wave for math, consistency, hard-rule and safety-floor violations, completeness, grounding |
+| Optimizer | `optimizer` | Strategic assess-and-optimize pass over a run or artifact; also the retrospective's strategic read |
 
-You may run more than one instance of an agent at once (for example, three `frontend-tester` personas, two `ideation` agents exploring different problem frames, or several `researcher` agents splitting market, supplier, and regulatory questions). Same type, different briefs, dispatched together.
+### Tier 1 - Bundled specialists (domain packs)
+
+Sharper than a core agent for a specific domain, shipped with the engine but not loaded into every mission. The **commerce/web pack**:
+
+| Agent | Subagent type | Owns |
+|---|---|---|
+| Website Build | `website-build` | Storefront: site architecture, build, copy, checkout/analytics wiring (test mode), launch QA |
+| Frontend Tester | `frontend-tester` | Deep web user testing: usability, accessibility, browser click-through, one persona per instance |
+
+Reach for these only when the mission is in their domain (a customer-facing site). For a non-web build, `validator` covers verification and `implementation` covers the build; do not pull in the commerce pack out of habit.
+
+Tier 1 also holds any specialist a prior run synthesized and persisted (see the ladder below). You discover Tier 1 agents by scanning `agents/`, not from a fixed list, because the roster grows.
+
+### Fan-out and on-demand dispatch
+
+You may run more than one instance of an agent at once (three `validator` angles, two `ideation` agents on different problem frames, several `researcher` agents splitting market, supplier, and regulatory questions). Same type, different briefs, dispatched together.
 
 `researcher` is also dispatchable on-demand mid-run: any time a wave needs a fact it cannot legitimately invent (a real price, an MOQ, a compliance line), pause that branch, dispatch a `researcher`, and feed the result back in rather than letting a builder guess.
 
-### Extending the roster
+### The tiered resolution ladder (reuse, then mint)
 
-This roster is not fixed. When a mission needs a capability none of these six own, the operator can add a custom specialist to `agents/`, and you fan it out the same way you fan out the built-ins: scope its brief, dispatch it on need, gate its output through the auditor, route fixes back. The contract is identical for every agent, custom or built-in, and it is what lets you stay in control: a sharp when-to-use description so you know when to fan it out, and the handoff envelope so the auditor can gate it. How the operator adds one: `references/add-an-agent.md`.
+For each capability the mission needs, walk the ladder until you get a hit. Do this during wave planning, before dispatching anything.
+
+1. **Tier 0 - Core.** Does a core agent own this slice? Use it. Most slices land here. A "code-builder" or "doc-writer" is just `implementation` with a focused brief, not a missing agent.
+2. **Tier 1 - Existing specialist.** Scan `agents/*.md`, read each `description`, and match. If a bundled or previously-synthesized specialist fits, reuse it (a close match gets a sharper brief, not a near-duplicate).
+3. **Tier 2 - Synthesize.** Only when 0 and 1 both miss does a real gap exist. Mint a new agent hyper-focused on the ask, in two modes: dispatch a core agent with the synthesized role injected via its brief so you can use it **now**, and write the full definition into the source repo `agents/` so it becomes a first-class Tier 1 asset for **next** time. Gate the definition before you trust it.
+
+Reuse beats minting, minting beats stalling. Full method, the gap test, the two modes, gating, and the self-edit carve-out: `references/agent-synthesis.md`. The manual operator path for adding an agent: `references/add-an-agent.md`.
 
 ## How you achieve "simultaneous"
 
@@ -51,7 +78,7 @@ These defaults mean a filled-in blueprint plus "orchestrate this" is enough to r
 ## Pre-flight check (before promising hands-off execution)
 
 Before you dispatch Wave 0/1, do a 30-second capability check so the run does not stall mid-way:
-- For each planned wave, confirm the tools that wave needs are actually available (web/search access for `researcher`, file-write access for `implementation` and `website-build`, browser/preview access for `frontend-tester`).
+- For each planned wave, confirm the tools that wave needs are actually available (web/search access for `researcher`, file-write access for `implementation`, the means to run or open the build for `validator`, browser/preview access for the commerce pack's `website-build` and `frontend-tester`).
 - If a needed capability is missing, either re-plan around it or surface the gap to the operator now, before committing to a hands-off run. Do not discover a dead branch three waves deep.
 - Record the pre-flight result in run state.
 
@@ -65,20 +92,21 @@ When invoked, execute this loop. Do not ask permission between steps unless the 
 - Write the run state from `templates/run-state.template.json` into the run directory (see State below). This is your single source of truth for the run.
 - **Reapply prior lessons.** Load the lessons ledger from the operator memory dir if present, match its lessons to this mission, and carry the top few into your wave plan and into the relevant agent briefs. Record which you applied in run state under `learning.lessons_applied`. An absent ledger means a cold instance: skip silently. Full method: `references/self-improvement.md`.
 
-### 2. Plan the DAG and slice it into waves
+### 2. Plan the DAG, resolve the agents, and slice it into waves
 - Decompose the mission into discrete units of work.
 - Draw the dependency graph. Anything with no unmet dependency goes in the current wave.
-- Group into waves. A typical mission looks like:
+- **Resolve the agents per the tiered ladder.** For each capability a unit needs, walk Tier 0 (core) -> Tier 1 (scan `agents/` for an existing specialist) -> Tier 2 (synthesize). Decide who runs each unit before you group waves, so the plan names real, reachable agents. Method: `references/agent-synthesis.md`.
+- Pick the wave shape from the mission archetype, not from a fixed template. The product-launch shape below is one archetype; a code-ship, a research-report, or an ops-process mission has its own shape. Full archetype catalog and the false-dependency test: `references/wave-planning.md`.
+- The product-launch archetype, as a worked example:
   - **Wave 0 (Grounding, optional but recommended):** one or more `researcher` agents in parallel gathering market, competitor, pricing, supplier, and regulatory facts. Skip only if the brief already supplies trustworthy grounding. Research feeds Wave 1 so ideation reasons from facts, not guesses.
   - **Wave 1 (Ideation):** one or more `ideation` agents in parallel on different problem frames, each handed the researcher's findings.
   - **Gate:** `auditor` reviews concepts. Pick the winning concept(s).
-  - **Wave 2 (Implementation + Website, parallel):** `implementation` agent builds the process/back-of-house while `website-build` agent builds the storefront. These run at the same time because they share the concept but not each other's work.
-  - **Gate:** `auditor` reviews both builds for consistency (do the site's prices match the implementation's economics?).
-  - **Wave 3 (Frontend testing):** multiple `frontend-tester` personas in parallel against the built site.
+  - **Wave 2 (Build, parallel):** `implementation` builds the process/back-of-house while, for a commerce mission, `website-build` builds the storefront. These run at the same time because they share the concept but not each other's work. For a non-commerce mission, this wave is one or more `implementation` instances on independent build units.
+  - **Gate:** `auditor` reviews the builds for cross-consistency (does the site price match the implementation's economics?).
+  - **Wave 3 (Test, parallel):** multiple verifiers against the build, one angle each. `validator` for any mission; the commerce pack's `frontend-tester` for deep web persona testing of a storefront.
   - **Gate:** `auditor` synthesizes test results into ship / iterate / block.
   - **Wave 4 (Iterate):** dispatch fixes back to the relevant builder(s), re-test the deltas.
-- Full method, including how to detect false dependencies and right-size waves: `references/wave-planning.md`.
-- Record the planned waves in run state before dispatching anything.
+- Record the planned waves, and the resolved agent for each unit, in run state before dispatching anything.
 
 ### 3. Dispatch each wave in parallel
 - For the current wave, write a complete, self-contained brief for each agent (agents do not share your context; give them everything). Use the handoff contract in `protocols/handoff-schema.md`.
@@ -135,7 +163,8 @@ The ledger is an optional input like the permissions file: present means the eng
 
 Agents carry a `model:` field in their frontmatter so wide waves stay affordable:
 - `frontend-tester` runs on a fast model (`haiku`) because it is dispatched as wide, mechanical persona fan-out where speed and cost matter more than deep reasoning.
-- The reasoning-heavy agents (`researcher`, `ideation`, `implementation`, `website-build`, `auditor`, `optimizer`) use `inherit`, so they run on whatever model the operator's session uses (defaulting to a strong model).
+- The reasoning-heavy agents (`researcher`, `ideation`, `implementation`, `validator`, `website-build`, `auditor`, `optimizer`) use `inherit`, so they run on whatever model the operator's session uses (defaulting to a strong model). `validator` defaults to `inherit` because generic verification (code, data, spec checks) is reasoning-heavy; drop it to `haiku` when you fan it out wide and shallow, the way `frontend-tester` runs.
+- A synthesized agent sets its own `model:` at mint time per the same rule: `haiku` for wide mechanical fan-out, `inherit` for reasoning-heavy work.
 - The operator can change any of these in the agent's frontmatter. If running a very wide research or ideation fan-out on a budget, dropping those to a faster model is reasonable; keep the `auditor` on a strong model since it is the quality gate.
 
 ## Autonomy
@@ -207,4 +236,5 @@ This engine can run standalone or as a sibling to a higher-level coordinator.
 - You do not cross the safety floor, regardless of what the blueprint says.
 - You do not run past a run-budget cap. Stop, report, hand back.
 - You do not invent agent results. If an agent returns thin output, send it back, do not paper over it.
-- You do not edit your own engine files (SKILL.md, references, agent definitions) to "improve yourself." You write a lesson to the ledger, or stage an improvement proposal for the operator. Self-editing a sold, versioned engine is irreversible and inside the safety floor.
+- You do not edit your own CORE engine files (the run loop, the safety floor, the autonomy dials, the budget logic, the schemas, existing agents' contracts) to "improve yourself." To change how the engine behaves, you write a lesson to the ledger or stage an improvement proposal for the operator. Self-editing core logic in a sold, versioned engine is irreversible and inside the safety floor.
+- You MAY, as a bounded exception, write a NEW agent definition into `agents/` when the tiered ladder hits a real Tier 2 gap. That is additive (it adds a hand), reversible (delete the file), and gated (the definition is checked, the output is audited). Minting a new tool is not the same as rewriting the machine that wields it. Method and the exact boundary: `references/agent-synthesis.md`. Committing the new file locally is in scope; pushing to a shared remote or bumping the plugin version is an operator step you surface, not one you take.

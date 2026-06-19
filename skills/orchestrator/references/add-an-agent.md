@@ -1,6 +1,10 @@
 # Adding a new agent
 
-How to add a custom specialist the orchestrator can fan out, scope, and gate exactly like the built-in six.
+How to add a custom specialist the orchestrator can fan out, scope, and gate exactly like the built-in core.
+
+There are two paths to a new agent, and they share this same contract:
+- **Operator-driven (this doc):** you decide a specialist is worth having and add it deliberately, by hand, as a permanent part of the roster.
+- **Orchestrator-driven (autonomous):** during a run the tiered resolution ladder hits a real Tier 2 gap and the engine mints the agent itself, hyper-focused on the ask, then persists it so it becomes reusable. That path is `references/agent-synthesis.md`, including the gap test, the two synthesis modes, and the self-edit carve-out that makes it safe. Read that if you want the engine to grow its own roster; read on here for the manual path.
 
 ## The principle
 
@@ -19,11 +23,13 @@ The orchestrator owns control. It scopes the mission, plans the waves, fans out 
 
 ## Register it so the orchestrator knows it exists
 
-Dropping the file in `agents/` makes it dispatchable, but the engine still has to be told it is part of the roster:
+Dropping a well-formed file in `agents/` is enough for the orchestrator to find and use it: Tier 1 resolution is a glob-and-match over `agents/*.md` descriptions, and the `agent` field in both schemas accepts any kebab-case name, so a new agent is discoverable and its dispatches validate with no further edits. That is the minimum, and it is all a synthesized agent needs.
 
-1. **Roster:** add a row to the table in `SKILL.md` (## The roster you command) with the agent's call and what it owns.
-2. **Enums:** add the agent's name to the `agent` enum in `protocols/handoff-schema.md` and to the dispatch `agent` enum in `protocols/run-state.schema.json`, so run-state validates when the orchestrator records the dispatch.
-3. **Wave shape (optional):** if the new agent changes the canonical wave shape, add a note to `references/wave-planning.md`.
+To **promote** an agent into a standard, documented part of the roster (recommended for one you added deliberately and will rely on), also:
+
+1. **Roster:** add a row to the right tier table in `SKILL.md` (## The roster you command) with the agent's call and what it owns.
+2. **Wave shape (optional):** if the new agent changes a canonical wave shape, add a note to `references/wave-planning.md`.
+3. **Enums (optional, for legibility):** the schemas already validate any kebab-case name, so no edit is required; add the name to the lists in `protocols/handoff-schema.md` and `protocols/run-state.schema.json` only if you want it documented there.
 
 ## The template
 

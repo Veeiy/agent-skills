@@ -10,7 +10,7 @@ Every agent returns:
 === VANTAGE HANDOFF ===
 run_id:        <YYYY-MM-DD-mission-slug>
 wave:          <integer>
-agent:         <researcher | ideation | implementation | website-build | auditor | frontend-tester | optimizer>
+agent:         <researcher | ideation | implementation | validator | auditor | optimizer | website-build | frontend-tester | a synthesized kebab-case specialist name>
 dispatch_id:   <wave>.<agent>.<instance>   e.g. 2.website-build.1
 status:        <complete | partial | blocked>
 artifact_path: <relative path under the run's artifacts/ where this output is written>

@@ -6,14 +6,18 @@ A venture-agnostic autonomous build engine for [Claude Code](https://docs.claude
 
 - **Orchestrator skill** (`skills/orchestrator/SKILL.md`): the planner and conductor. Turns a mission into waves, dispatches agents, runs the auditor gates, integrates results, and loops to the definition of done. Learns across runs through a lessons ledger.
 - **Optimizer skill** (`skills/optimizer/SKILL.md`): a standalone assess-and-optimize engine callable in any chat. Finds the single highest-leverage move and returns a ranked plan. Advisory by default.
-- **Seven sub-agents** (`agents/`):
-  - **researcher**: gathers facts, market, pricing, regulatory, and source material the rest of the run depends on.
-  - **ideation**: turns research into concrete framings, concepts, and options to build against.
-  - **implementation**: builds the non-website deliverables: specs, workflows, ops docs, data files, checklists.
-  - **website-build**: builds and fixes the storefront, landing page, or site, including post-audit fixes.
-  - **auditor**: gates each wave for correctness and completeness and returns PASS, WARN, or BLOCK.
-  - **frontend-tester**: runs persona-based user testing against the built UI to surface real-user friction.
-  - **optimizer**: the dispatchable twin of the optimizer skill, for in-run strategic optimization passes.
+- **A tiered agent roster** (`agents/`). The orchestrator does not have a fixed cast; it walks a ladder to get the right specialist for each slice (see Extending the engine below).
+  - **Tier 0, core (always available, mission-agnostic):**
+    - **researcher**: gathers facts, market, pricing, regulatory, and source material the rest of the run depends on.
+    - **ideation**: turns research into concrete framings, concepts, and options to build against.
+    - **implementation**: builds the deliverables: code, specs, workflows, ops docs, data files, checklists.
+    - **validator**: verifies any built artifact against its definition of done from one angle (correctness, edge cases, spec conformance, a persona, data quality, accessibility). Mission-agnostic, not just for sites.
+    - **auditor**: gates each wave for correctness and completeness and returns PASS, WARN, or BLOCK.
+    - **optimizer**: the dispatchable twin of the optimizer skill, for in-run strategic optimization passes.
+  - **Tier 1, bundled specialists (loaded only when the mission is in their domain).** The commerce/web pack:
+    - **website-build**: builds and fixes the storefront, landing page, or site, including post-audit fixes.
+    - **frontend-tester**: runs persona-based user testing against a built storefront UI to surface real-user friction.
+  - **Tier 2, synthesized.** When a mission needs a capability no core or bundled agent covers, the engine mints a new specialist hyper-focused on the ask and persists it for reuse.
 
 ## How it works
 
@@ -53,13 +57,13 @@ The auditor gates keep a single run honest. The self-improvement loop makes the 
 
 Lessons earn trust over time. A lesson is born low-confidence, rises as later runs confirm it, and falls when a run contradicts it, so the ledger strengthens what pays off and catches what does not. The ledger lives in an operator memory directory outside any single run and outside the engine's own files, so the engine stays venture-agnostic and every operator's instance learns its own lessons.
 
-The engine never edits its own files to improve itself. When a lesson is about the engine's own playbook rather than one mission, the retrospective stages an improvement proposal for the operator to review and apply. That keeps self-improvement on the right side of the safety floor: the ledger sharpens every run automatically, and the engine's source changes only through a reviewed proposal.
+The engine never edits its own core logic to improve itself: the run loop, the safety floor, the dials, the budget, the schemas, and existing agents' contracts change only through a reviewed improvement proposal. The one bounded exception is additive: when the resolution ladder hits a real gap, the engine may write a new agent file into `agents/`, because that adds a hand without rewriting the machine, is reversible (delete the file), and is gated (the definition is checked, its output is audited). When a lesson is about the engine's own playbook rather than one mission, the retrospective stages an improvement proposal for the operator to review and apply. That keeps self-improvement on the right side of the safety floor: the ledger sharpens every run automatically, the roster can grow on its own, and the engine's core source changes only through a reviewed proposal.
 
 ## Model assignment
 
 - **frontend-tester runs on a fast model (haiku).** It is dispatched as a wide, mechanical persona fan-out (many testers, simple personas), so speed and cost matter more than deep reasoning.
-- **The reasoning agents inherit the session model.** Researcher, ideation, implementation, website-build, auditor, and optimizer use whatever model the session is running, because their work is judgment-heavy.
-- Operators can change any of this in each agent's frontmatter.
+- **The reasoning agents inherit the session model.** Researcher, ideation, implementation, validator, website-build, auditor, and optimizer use whatever model the session is running, because their work is judgment-heavy. Drop validator to haiku when you fan it out wide and shallow.
+- Operators can change any of this in each agent's frontmatter. A synthesized agent picks its own model at mint time by the same rule.
 
 ## Self-bootstrapping
 
@@ -76,7 +80,12 @@ The optimizer skill is independent. Summon it in any chat with "optimize this" o
 
 ## Extending the engine
 
-The six specialists are not a fixed set. When a mission needs a capability none of them own, you add your own agent and the orchestrator fans it out, scopes it, and gates it like the rest. An agent is a single markdown file in `agents/` with a sharp when-to-use description (that is the dispatch trigger) and the shared handoff envelope (that is what lets the auditor gate it). Copy `skills/orchestrator/references/agent.template.md` and follow `skills/orchestrator/references/add-an-agent.md` for the full recipe, including how to register the agent so the orchestrator knows it can dispatch it. Workers stay flat: only the orchestrator dispatches, which keeps every wave inside the audit loop.
+The roster grows two ways, both through the same tiered resolution ladder. For each capability a mission needs, the orchestrator walks: **Tier 0** (a core agent), then **Tier 1** (scan `agents/` for an existing or previously-synthesized specialist), then **Tier 2** (mint a new one). Reuse beats minting, minting beats stalling.
+
+- **You add one (deliberate).** When you know a specialist is worth keeping, add it by hand. An agent is a single markdown file in `agents/` with a sharp when-to-use description (the dispatch trigger) and the shared handoff envelope (what lets the auditor gate it). Copy `skills/orchestrator/references/agent.template.md` and follow `skills/orchestrator/references/add-an-agent.md`.
+- **The engine mints one (autonomous).** When the ladder hits a real gap mid-run, the orchestrator synthesizes a specialist hyper-focused on the ask: it dispatches a core agent with the synthesized role injected via its brief so it can use the capability immediately, and writes the full definition into `agents/` so it becomes a first-class specialist next run. The full method, the test for when a gap is real, and the exact line between adding a hand (allowed) and rewriting core logic (operator-gated) live in `skills/orchestrator/references/agent-synthesis.md`.
+
+Discovery is by scan, not a hardcoded list, so a well-formed file in `agents/` is found and reused automatically. Workers stay flat: only the orchestrator dispatches, which keeps every wave inside the audit loop.
 
 ## Repo layout
 
@@ -84,18 +93,19 @@ The six specialists are not a fixed set. When a mission needs a capability none 
 .claude-plugin/
   plugin.json
   marketplace.json
-agents/
-  researcher.md
-  ideation.md
-  implementation.md
-  website-build.md
-  auditor.md
-  frontend-tester.md
-  optimizer.md
+agents/                # Tier 0 core (always available) + Tier 1 bundled pack
+  researcher.md        # core
+  ideation.md          # core
+  implementation.md    # core
+  validator.md         # core
+  auditor.md           # core
+  optimizer.md         # core
+  website-build.md     # commerce/web pack
+  frontend-tester.md   # commerce/web pack
 skills/
   orchestrator/
     SKILL.md
-    references/        # wave planning, parallel dispatch, self-improvement, add-an-agent + template
+    references/        # wave planning, parallel dispatch, self-improvement, agent-synthesis, add-an-agent + template
     templates/         # mission blueprint, run state, lessons ledger, retrospective, improvement proposal
     protocols/         # handoff schema, run-state schema, lessons-ledger schema
   optimizer/

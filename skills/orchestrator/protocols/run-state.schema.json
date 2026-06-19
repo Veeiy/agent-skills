@@ -81,7 +81,8 @@
                 "dispatch_id": { "type": "string", "description": "wave.agent.instance" },
                 "agent": {
                   "type": "string",
-                  "enum": ["researcher", "ideation", "implementation", "website-build", "auditor", "frontend-tester", "optimizer"]
+                  "pattern": "^[a-z][a-z0-9-]*$",
+                  "description": "Core (Tier 0): researcher, ideation, implementation, validator, auditor, optimizer. Bundled commerce specialists (Tier 1): website-build, frontend-tester. Synthesized specialists (Tier 2) are also valid: any kebab-case agent name validates, so a minted agent's dispatch can be recorded without editing this schema. For a hyperfocused core agent (synthesis Mode A), record the core agent's name here and note the synthesized role in brief_summary."
                 },
                 "brief_summary": { "type": "string" },
                 "dependency_reason": { "type": "string", "description": "why this is in this wave / what it depends on" },

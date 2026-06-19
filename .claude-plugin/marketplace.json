@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "vantage-orchestrator",
-      "description": "Venture-agnostic orchestrator engine. Plans a mission into a wave-based DAG, deploys specialist sub-agents (researcher, ideation, implementation, website-build, auditor, frontend-tester) in parallel, gates each wave through the auditor, and runs autonomously under configurable autonomy and external-authority dials with run-budget stop conditions and a non-negotiable safety floor. Ships a portable optimizer skill.",
+      "description": "Venture-agnostic orchestrator engine. Plans a mission into a wave-based DAG and resolves each slice through a tiered agent ladder: reuse a core agent (researcher, ideation, implementation, validator, auditor, optimizer), reuse a bundled or previously-synthesized specialist, or synthesize a new one hyper-focused on the ask and persist it for reuse. Deploys sub-agents in parallel, gates each wave through the auditor, and runs autonomously under configurable autonomy and external-authority dials with run-budget stop conditions and a non-negotiable safety floor. Ships a commerce pack (website-build, frontend-tester) and a portable optimizer skill.",
       "author": {
         "name": "Vantage"
       },
