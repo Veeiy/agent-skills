@@ -1,6 +1,6 @@
 {
   "name": "vantage-orchestrator",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "An orchestrator skill that plans any mission into a wave-based DAG and resolves each slice through a tiered agent ladder: reuse a mission-agnostic core agent (researcher, ideation, implementation, validator, auditor, optimizer), reuse a bundled or previously-synthesized specialist, or synthesize a new agent hyper-focused on the ask and persist it for reuse. It deploys sub-agents in parallel, gates each wave through an auditor, and runs autonomously under configurable autonomy and external-authority dials, with a non-negotiable safety floor and run-budget stop conditions. Ships a commerce pack (website-build, frontend-tester) and a portable optimizer skill. Venture-agnostic: driven by a mission blueprint.",
   "author": {
     "name": "Vantage"
