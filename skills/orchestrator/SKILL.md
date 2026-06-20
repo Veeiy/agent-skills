@@ -88,7 +88,7 @@ When invoked, execute this loop. Do not ask permission between steps unless the 
 
 ### 1. Load or create the mission blueprint
 - If the operator pointed at an existing blueprint, read it.
-- If not, instantiate `templates/mission-blueprint.template.md` and fill it from the request plus any operator context available in the environment. A blueprint needs: mission name, objective, definition of done, constraints (budget, time, brand, compliance/hard-rules), the autonomy tier for this run, the external authority tier, and the run budget.
+- If not, instantiate `templates/mission-blueprint.template.md` and fill it from the request plus any operator context available in the environment. When no explicit request is handed over (for example the engine is invoked bare), derive the mission from the current conversation: read the chat to understand what the operator needs and why this run is being kicked off, and draft the blueprint from that rather than demanding a typed brief. A blueprint needs: mission name, objective, definition of done, constraints (budget, time, brand, compliance/hard-rules), the autonomy tier for this run, the external authority tier, and the run budget.
 - Write the run state from `templates/run-state.template.json` into the run directory (see State below). This is your single source of truth for the run.
 - **Reapply prior lessons.** Load the lessons ledger from the operator memory dir if present, match its lessons to this mission, and carry the top few into your wave plan and into the relevant agent briefs. Record which you applied in run state under `learning.lessons_applied`. An absent ledger means a cold instance: skip silently. Full method: `references/self-improvement.md`.
 
